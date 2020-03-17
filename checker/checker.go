@@ -4,10 +4,9 @@ import (
 	"os"
 	"fmt"
 	"strings"
-	//"reflect"
 	"strconv"
-	//"errors"
 	"bufio"
+	"sort"
 )
 
 func abort(e error) {
@@ -24,7 +23,6 @@ func buildStack(args []string) (s []int) {
 		} else if _, ok := cache[val]; ok == true {
 			abort(fmt.Errorf("%v: duplicated value", val))
 		}
-		fmt.Println(cache)
 		cache[val] = true
 		s = append(s, val)
 	}
@@ -42,29 +40,47 @@ func getMoves() (m[]string) {
 	return m
 }
 
-func checkMoves(moves []string) {
-	allowedMoves := map[string]bool {
-		"sa": true,
-		"sb": true,
+func checkMoves(moves []string) (intMoves []int) {
+	allowedMoves := map[string]int {
+		"sa": 1,
+		"sb": 2,
+		"ss": 3,
+		"pa": 4,
+		"pb": 5,
+		"ra": 6,
+		"rb": 7,
+		"rr": 8,
+		"rra": 9,
+		"rrb": 10,
+		"rrr": 11,
+	}
+	specialMoves := map[string]bool {
 		"ss": true,
-		"pa": true,
-		"pb": true,
-		"ra": true,
-		"rb": true,
 		"rr": true,
-		"rra": true,
-		"rrb": true,
 		"rrr": true,
 	}
 	for _, m := range moves {
 		if _, ok := allowedMoves[m]; ok == false {
 			abort(fmt.Errorf("%v: not a valid move", m))
 		}
+		if _, ok := specialMoves[m]; ok == true {
+			intMoves = append(intMoves, allowedMoves[m] - 2)
+			intMoves = append(intMoves, allowedMoves[m] - 1)
+		} else {
+			intMoves = append(intMoves, allowedMoves[m])
+		}
 	}
+	return
 }
 
 func main() {
 	st := buildStack(os.Args[1:])
-	m := getMoves()
-	checkMoves(m)
+	raw_m := getMoves()
+	m := checkMoves(raw_m)
+	a := play(st, m)
+	if sort.IntsAreSorted(a) == true {
+		fmt.Println("OK")
+	} else {
+		fmt.Println("KO")
+	}
 }
