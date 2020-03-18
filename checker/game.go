@@ -77,7 +77,7 @@ func  rev_rotate_b(a []int, b []int) ([]int, []int) {
 	return a, b
 }
 
-func play(a []int, moves []int) []int {
+func play(a []int, moves []int) ([]int, []int) {
 	b := []int{}
 	turn := map[int]func([]int, []int) ([]int, []int) {
 		1: swap_a,
@@ -90,9 +90,9 @@ func play(a []int, moves []int) []int {
 		10: rev_rotate_b,
 	}
 	for _, v := range moves {
-		fmt.Println(a, b)//
+		fmt.Println(a, b)// VERBOSE
 		a, b = turn[v](a, b)
 	}
-	fmt.Println(a, b)//
-	return a
+	fmt.Println(a, b)// VERBOSE
+	return a, b
 }
