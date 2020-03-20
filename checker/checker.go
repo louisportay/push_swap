@@ -3,22 +3,18 @@ package main
 import (
 	"os"
 	"fmt"
-	"sort"
 	"gitlab.com/louisportay/push_swap/parser"
+	st "gitlab.com/louisportay/push_swap/sortstacks"
 )
 
-func end_game(a []int, b []int) {
-	if len(b) > 0 || sort.IntsAreSorted(a) == false {
-		fmt.Println("KO")
-	} else {
-		fmt.Println("OK")
-	}
-}
-
 func main() {
-	a := parser.BuildStack(os.Args[1:])
-	raw_m := parser.GetMoves()
-	m := parser.CheckMoves(raw_m)
-	a, b := play(a, m)
-	end_game(a, b)
+	s := st.New(parser.BuildStack(os.Args[1:]))
+	s.SetOps(parser.GetOps())
+	s.CheckOps()
+	s.Play()
+	if s.IsOk() == true {
+		fmt.Println("OK")
+	} else {
+		fmt.Println("KO")
+	}
 }
