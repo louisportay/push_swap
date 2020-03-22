@@ -6,21 +6,32 @@ import (
 	"sort"
 )
 
+type Op func()
+
 type sortStacks struct {
 	a, b []int
-	ops []string
-	f map[string]func()
+	ops  []string
+	f    map[string]Op
 }
 
 type SortStacks interface {
-	helperNew()
 	SetOps([]string)
-	CheckOps()
-	GetFunc(op string) func()
-	Play()
-	IsOk() bool
+	AddOps([]string)
+	Ops() []string
+	Op(string) Op
+	PrintOps()
+	A() []int
+	B() []int
+	FirstA() int
+	FirstB() int
+	LastA() int
+	LastB() int
+	PrintA()
+	PrintB()
+	PrintBoth()
+	IsASorted() bool
 
-/*	SwapA()
+	SwapA()
 	SwapB()
 	SwapBoth()
 	PushA()
@@ -30,64 +41,86 @@ type SortStacks interface {
 	RotateBoth()
 	RevRotateA()
 	RevRotateB()
-	RevRotateBoth()*/
+	RevRotateBoth()
 }
 
-func (st *sortStacks) CheckOps() {
-	for _, o := range st.ops {
+func (st *sortStacks) PrintA() {
+	fmt.Printf("A: %v\n", st.a)
+}
+
+func (st *sortStacks) PrintB() {
+	fmt.Printf("B: %v\n", st.b)
+}
+
+func (st *sortStacks) PrintBoth() {
+	st.PrintA()
+	st.PrintB()
+}
+
+func (st *sortStacks) A() []int {
+	return st.a
+}
+
+func (st *sortStacks) B() []int {
+	return st.b
+}
+
+func (st *sortStacks) AddOps(s []string) {
+	st.ops = append(st.ops, s...)
+}
+
+func (st *sortStacks) Op(op string) Op {
+	return st.f[op]
+}
+
+func (st *sortStacks) Ops() []string {
+	return st.ops
+}
+
+func (st *sortStacks) SetOps(s []string) {
+	for _, o := range s {
 		if _, ok := st.f[o]; ok == false {
 			log.Fatalln(fmt.Errorf("%v: not a valid operation", o))
 		}
 	}
-}
-
-func (st *sortStacks) GetFunc(s string) func() {
-	return st.f[s]
-}
-
-func (st *sortStacks) SetOps(s []string) {
 	st.ops = s
 }
 
-func (st *sortStacks) GetOps() []string {
-	return st.ops
+func (st *sortStacks) PrintOps() {
+	for _, v := range st.ops {
+		fmt.Printf("%v\n", v)
+	}
 }
 
 func (st *sortStacks) helperNew() {
-	st.f = map[string]func(){
-		"sa": st.SwapA,
-		"sb": st.SwapB,
-		"ss": st.SwapBoth,
-		"pa": st.PushA,
-		"pb": st.PushB,
-		"ra": st.RotateA,
-		"rb": st.RotateB,
-		"rr": st.RotateBoth,
+	st.f = map[string]Op{
+		"sa":  st.SwapA,
+		"sb":  st.SwapB,
+		"ss":  st.SwapBoth,
+		"pa":  st.PushA,
+		"pb":  st.PushB,
+		"ra":  st.RotateA,
+		"rb":  st.RotateB,
+		"rr":  st.RotateBoth,
 		"rra": st.RevRotateA,
 		"rrb": st.RevRotateB,
 		"rrr": st.RevRotateBoth,
 	}
 }
 
-func New(i []int) (st SortStacks) {
-	st = &sortStacks{
+func New(i []int) SortStacks {
+	st := &sortStacks{
 		a: i,
 		b: []int{},
 	}
 	st.helperNew()
-	return
+	return st
 }
 
-func (st *sortStacks) Play() {
-	for _, o := range st.ops {
-		fmt.Println(st.a, st.b)// VERBOSE
-		st.f[o]()
-	}
-	fmt.Println(st.a, st.b)// VERBOSE
-}
+// B list is empty and A is sorted in ascending order
 
-func (st *sortStacks) IsOk() bool {
-	if len(st.b) > 0 || sort.IntsAreSorted(st.a) ==false {
+func (st *sortStacks) IsASorted() bool {
+	if len(st.b) > 0 || sort.IntsAreSorted(st.a) == false {
 		return false
 	} else {
 		return true

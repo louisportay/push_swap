@@ -1,12 +1,12 @@
 package parser
 
 import (
-	"os"
-	"strconv"
-	"strings"
 	"bufio"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func BuildStack(args []string) (s []int) {
@@ -14,7 +14,7 @@ func BuildStack(args []string) (s []int) {
 		os.Exit(0)
 	}
 	cache := make(map[int]bool)
-	for _, v  := range args {
+	for _, v := range args {
 		val, err := strconv.Atoi(v)
 		if err != nil {
 			log.Fatalln(err)
@@ -27,10 +27,13 @@ func BuildStack(args []string) (s []int) {
 	return s
 }
 
-func GetOps() (m []string) {
+func ReadOps() (m []string) {
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() == true {
-		m = append(m, strings.Trim(s.Text(), " 	"))
+		o := strings.Trim(s.Text(), " 	")
+		if len(o) > 0 {
+			m = append(m, o)
+		}
 	}
 	if e := s.Err(); e != nil {
 		log.Fatalln(e)
