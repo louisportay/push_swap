@@ -2,7 +2,7 @@ package sortstacks
 
 func swap(i []int) {
 	if len(i) > 1 {
-		i[0], i[1] = i[1], i[0]
+		i[len(i)-1], i[len(i)-1-1] = i[len(i)-1-1], i[len(i)-1]
 	}
 }
 
@@ -23,9 +23,9 @@ func (s *sortStacks) SwapBoth() {
 
 func push(a *[]int, b *[]int) {
 	if len(*a) > 0 {
-		var x int
-		x, *a = (*a)[0], (*a)[1:]
-		*b = append([]int{x}, *b...)
+		x := (*a)[len(*a)-1]
+		*a = (*a)[:len(*a)-1]
+		*b = append(*b, x)
 	}
 }
 
@@ -37,11 +37,11 @@ func (s *sortStacks) PushB() {
 	push(&s.a, &s.b)
 }
 
+// Expensive op
 func rotate(i *[]int) {
 	if len(*i) > 1 {
-		var x int
-		x, *i = (*i)[0], (*i)[1:]
-		*i = append(*i, x)
+		x := (*i)[len(*i)-1]
+		*i = append([]int{x}, (*i)[:len(*i)-1]...)
 	}
 }
 
@@ -58,11 +58,22 @@ func (s *sortStacks) RotateBoth() {
 	rotate(&s.b)
 }
 
+func (s *sortStacks) RotateSorted() {
+	x := s.a[len(s.a)-1]
+	s.a = s.a[:len(s.a)-1]
+	s.sorted = append(s.sorted, x)
+}
+
+func (s *sortStacks) PushSorted() {
+	x := s.b[len(s.b)-1]
+	s.b = s.b[:len(s.b)-1]
+	s.sorted = append(s.sorted, x)
+}
+
 func revRotate(i *[]int) {
 	if len(*i) > 1 {
-		var x int
-		x, *i = (*i)[len(*i)-1], (*i)[:len(*i)-1]
-		*i = append([]int{x}, *i...)
+		x := (*i)[0]
+		*i = append((*i)[1:], x)
 	}
 }
 

@@ -9,12 +9,13 @@ import (
 	"strings"
 )
 
-func BuildStack(args []string) (s []int) {
+func BuildStack(args []string) []int {
 	if len(args) == 0 {
 		os.Exit(0)
 	}
+	s := make([]int, len(args))
 	cache := make(map[int]bool)
-	for _, v := range args {
+	for i, v := range args {
 		val, err := strconv.Atoi(v)
 		if err != nil {
 			log.Fatalln(err)
@@ -22,7 +23,7 @@ func BuildStack(args []string) (s []int) {
 			log.Fatalln(fmt.Errorf("%v: duplicated value", val))
 		}
 		cache[val] = true
-		s = append(s, val)
+		s[i] = val
 	}
 	return s
 }

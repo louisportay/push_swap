@@ -8,10 +8,16 @@ import (
 
 type Op func()
 
+/*
+	Virtually, the 'sorted' list is contained in A but for implementation
+	optimizations, it has a dedicated list
+*/
+
 type sortStacks struct {
-	a, b []int
-	ops  []string
-	f    map[string]Op
+	a, b   []int
+	sorted []int
+	ops    []string
+	f      map[string]Op
 }
 
 type SortStacks interface {
@@ -20,8 +26,10 @@ type SortStacks interface {
 	Ops() []string
 	Op(string) Op
 	PrintOps()
-	A() []int
-	B() []int
+	A(int) int
+	B(int) int
+	LenA() int
+	LenB() int
 	FirstA() int
 	FirstB() int
 	LastA() int
@@ -29,7 +37,7 @@ type SortStacks interface {
 	PrintA()
 	PrintB()
 	PrintBoth()
-	IsASorted() bool
+	Sorted() bool
 
 	SwapA()
 	SwapB()
@@ -42,14 +50,43 @@ type SortStacks interface {
 	RevRotateA()
 	RevRotateB()
 	RevRotateBoth()
+
+	RotateSorted()
+	PushSorted()
+	PrintSorted()
+}
+
+func reverseInts(a []int) {
+	for i := len(a)/2 - 1; i >= 0; i-- {
+		opp := len(a) - 1 - i
+		a[i], a[opp] = a[opp], a[i]
+	}
+}
+
+/*
+	'sorted' list is stored in ascending order
+	'virtual A' list is 'sorted' + reversed 'A' list
+	'B' is the only list that needs reversing
+*/
+
+func printStack(l []int, s string) {
+	fmt.Printf("%v: %v\n", s, l)
 }
 
 func (st *sortStacks) PrintA() {
-	fmt.Printf("A: %v\n", st.a)
+	printStack(st.virtualA(), "A")
 }
 
 func (st *sortStacks) PrintB() {
-	fmt.Printf("B: %v\n", st.b)
+	tmp := make([]int, len(st.b))
+	copy(tmp, st.b)
+	reverseInts(tmp)
+	printStack(tmp, "B")
+}
+
+func (st *sortStacks) PrintSorted() {
+	printStack(st.sorted, "Sorted")
+
 }
 
 func (st *sortStacks) PrintBoth() {
@@ -57,12 +94,20 @@ func (st *sortStacks) PrintBoth() {
 	st.PrintB()
 }
 
-func (st *sortStacks) A() []int {
-	return st.a
+func (st *sortStacks) A(i int) int {
+	return st.a[len(st.a)-1-i]
 }
 
-func (st *sortStacks) B() []int {
-	return st.b
+func (st *sortStacks) B(i int) int {
+	return st.a[len(st.b)-1-i]
+}
+
+func (st *sortStacks) LenA() int {
+	return len(st.a)
+}
+
+func (st *sortStacks) LenB() int {
+	return len(st.b)
 }
 
 func (st *sortStacks) AddOps(s []string) {
@@ -109,18 +154,33 @@ func (st *sortStacks) helperNew() {
 }
 
 func New(i []int) SortStacks {
+	reverseInts(i)
 	st := &sortStacks{
-		a: i,
-		b: []int{},
+		a:      i,
+		b:      make([]int, 0, len(i)),
+		sorted: make([]int, 0, len(i)),
 	}
 	st.helperNew()
 	return st
 }
 
-// B list is empty and A is sorted in ascending order
+/*
+	B list must be empty and
+	A is first reversed and then concatenated with
+	the 'sorted' special list
+*/
 
-func (st *sortStacks) IsASorted() bool {
-	if len(st.b) > 0 || sort.IntsAreSorted(st.a) == false {
+func (st *sortStacks) virtualA() []int {
+	tmp := make([]int, len(st.a)+len(st.sorted))
+	copy(tmp, st.a)
+	reverseInts(tmp)
+	tmp = append(tmp, st.sorted...)
+
+	return tmp
+}
+
+func (st *sortStacks) Sorted() bool {
+	if len(st.b) > 0 || sort.IntsAreSorted(st.virtualA()) == false {
 		return false
 	} else {
 		return true
