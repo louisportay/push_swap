@@ -100,7 +100,7 @@ func (st *sortStacks) A(i int) int {
 }
 
 func (st *sortStacks) B(i int) int {
-	return st.a[len(st.b)-1-i]
+	return st.b[len(st.b)-1-i]
 }
 
 func (st *sortStacks) LenA() int {
