@@ -30,6 +30,7 @@ type SortStacks interface {
 	B(int) int
 	LenA() int
 	LenB() int
+	LenSorted() int
 	FirstA() int
 	FirstB() int
 	LastA() int
@@ -110,6 +111,10 @@ func (st *sortStacks) LenB() int {
 	return len(st.b)
 }
 
+func (st *sortStacks) LenSorted() int {
+	return len(st.sorted)
+}
+
 func (st *sortStacks) AddOps(s []string) {
 	st.ops = append(st.ops, s...)
 }
@@ -170,8 +175,10 @@ func New(i []int) SortStacks {
 	the 'sorted' special list
 */
 
+//OPTI: this function is heavily called
+// avoid allocing every time
 func (st *sortStacks) virtualA() []int {
-	tmp := make([]int, len(st.a)+len(st.sorted))
+	tmp := make([]int, len(st.a))
 	copy(tmp, st.a)
 	reverseInts(tmp)
 	tmp = append(tmp, st.sorted...)

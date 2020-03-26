@@ -58,16 +58,18 @@ func (s *sortStacks) RotateBoth() {
 	rotate(&s.b)
 }
 
-func (s *sortStacks) RotateSorted() {
-	x := s.a[len(s.a)-1]
-	s.a = s.a[:len(s.a)-1]
+func (s *sortStacks) pop(i *[]int) {
+	x := (*i)[len(*i)-1]
+	*i = (*i)[:len(*i)-1]
 	s.sorted = append(s.sorted, x)
 }
 
+func (s *sortStacks) RotateSorted() {
+	s.pop(&s.a)
+}
+
 func (s *sortStacks) PushSorted() {
-	x := s.b[len(s.b)-1]
-	s.b = s.b[:len(s.b)-1]
-	s.sorted = append(s.sorted, x)
+	s.pop(&s.b)
 }
 
 func revRotate(i *[]int) {
