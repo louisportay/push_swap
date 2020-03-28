@@ -3,7 +3,6 @@ package sortstacks
 import (
 	"fmt"
 	"log"
-	"sort"
 )
 
 type Op func()
@@ -28,17 +27,19 @@ type SortStacks interface {
 	PrintOps()
 	A(int) int
 	B(int) int
+	Sorted(int) int
 	LenA() int
 	LenB() int
 	LenSorted() int
+	CopyA() []int
+	CopyB() []int
+	CopySorted() []int
 	FirstA() int
 	FirstB() int
 	LastA() int
 	LastB() int
 	PrintA()
 	PrintB()
-	PrintBoth()
-	Sorted() bool
 
 	SwapA()
 	SwapB()
@@ -66,8 +67,8 @@ func reverseInts(a []int) {
 
 /*
 	'sorted' list is stored in ascending order
-	'virtual A' list is 'sorted' + reversed 'A' list
-	'B' is the only list that needs reversing
+	'virtual A' list is made of 'sorted' + reversed 'A' lists
+	'B' is the only list that needs explicit reversing
 */
 
 func printStack(l []int, s string) {
@@ -79,20 +80,12 @@ func (st *sortStacks) PrintA() {
 }
 
 func (st *sortStacks) PrintB() {
-	tmp := make([]int, len(st.b))
-	copy(tmp, st.b)
-	reverseInts(tmp)
-	printStack(tmp, "B")
+	printStack(st.CopyB(), "B")
 }
 
 func (st *sortStacks) PrintSorted() {
 	printStack(st.sorted, "Sorted")
 
-}
-
-func (st *sortStacks) PrintBoth() {
-	st.PrintA()
-	st.PrintB()
 }
 
 func (st *sortStacks) A(i int) int {
@@ -101,6 +94,10 @@ func (st *sortStacks) A(i int) int {
 
 func (st *sortStacks) B(i int) int {
 	return st.b[len(st.b)-1-i]
+}
+
+func (st *sortStacks) Sorted(i int) int {
+	return st.sorted[i]
 }
 
 func (st *sortStacks) LenA() int {
@@ -115,7 +112,21 @@ func (st *sortStacks) LenSorted() int {
 	return len(st.sorted)
 }
 
+func (st *sortStacks) checkOps(s []string) {
+	for _, o := range s {
+		if _, ok := st.f[o]; ok == false {
+			log.Fatalln(fmt.Errorf("%v: not a valid operation", o))
+		}
+	}
+}
+
+func (st *sortStacks) SetOps(s []string) {
+	st.checkOps(s)
+	st.ops = s
+}
+
 func (st *sortStacks) AddOps(s []string) {
+	st.checkOps(s)
 	st.ops = append(st.ops, s...)
 }
 
@@ -125,15 +136,6 @@ func (st *sortStacks) Op(op string) Op {
 
 func (st *sortStacks) Ops() []string {
 	return st.ops
-}
-
-func (st *sortStacks) SetOps(s []string) {
-	for _, o := range s {
-		if _, ok := st.f[o]; ok == false {
-			log.Fatalln(fmt.Errorf("%v: not a valid operation", o))
-		}
-	}
-	st.ops = s
 }
 
 func (st *sortStacks) PrintOps() {
@@ -158,6 +160,22 @@ func (st *sortStacks) helperNew() {
 	}
 }
 
+/*
+	intended for testing purposes only
+	'B' is always 'nil' in normal conditions
+*/
+func NewTest(A []int, B []int) SortStacks {
+	reverseInts(A)
+	reverseInts(B)
+	st := &sortStacks{
+		a: A,
+		b: B,
+		sorted: make([]int, 0, len(A)),
+	}
+	st.helperNew()
+	return st
+}
+
 func New(i []int) SortStacks {
 	reverseInts(i)
 	st := &sortStacks{
@@ -175,8 +193,6 @@ func New(i []int) SortStacks {
 	the 'sorted' special list
 */
 
-//OPTI: this function is heavily called
-// avoid allocing every time
 func (st *sortStacks) virtualA() []int {
 	tmp := make([]int, len(st.a))
 	copy(tmp, st.a)
@@ -186,10 +202,25 @@ func (st *sortStacks) virtualA() []int {
 	return tmp
 }
 
-func (st *sortStacks) Sorted() bool {
-	if len(st.b) > 0 || sort.IntsAreSorted(st.virtualA()) == false {
-		return false
-	} else {
-		return true
-	}
+func (st *sortStacks) CopyA() []int {
+	cp := make([]int, len(st.a))
+	copy(cp, st.a)
+	reverseInts(cp)
+
+	return cp
+}
+
+func (st *sortStacks) CopyB() []int {
+	cp := make([]int, len(st.b))
+	copy(cp, st.b)
+	reverseInts(cp)
+
+	return cp
+}
+
+func (st *sortStacks) CopySorted() []int {
+	cp := make([]int, len(st.b))
+	copy(cp, st.b)
+
+	return cp
 }

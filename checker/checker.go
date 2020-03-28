@@ -3,17 +3,10 @@ package main
 import (
 	"fmt"
 	"gitlab.com/louisportay/push_swap/parser"
-	ss "gitlab.com/louisportay/push_swap/sortstacks"
+	s "gitlab.com/louisportay/push_swap/sortstacks"
 	"os"
+	"sort"
 )
-
-func displayScore(ok bool) {
-	if ok {
-		fmt.Println("OK")
-	} else {
-		fmt.Println("KO")
-	}
-}
 
 func setFlags() bool {
 	if len(os.Args) == 1 {
@@ -28,23 +21,29 @@ func setFlags() bool {
 	return false
 }
 
-func play(s ss.SortStacks, v bool) {
-	for _, o := range s.Ops() {
+func play(st s.SortStacks, v bool) {
+	for _, o := range st.Ops() {
 		if v == true {
-			s.PrintBoth()
+			st.PrintA()
+			st.PrintB()
 			fmt.Printf("--- %v ---\n", o)
 		}
-		s.Op(o)()
+		st.Op(o)()
 	}
 	if v == true {
-		s.PrintBoth()
+		st.PrintA()
+		st.PrintB()
 	}
 }
 
 func main() {
 	verbose := setFlags()
-	s := ss.New(parser.BuildStack(os.Args[1:]))
-	s.SetOps(parser.ReadOps())
-	play(s, verbose)
-	displayScore(s.Sorted())
+	st := s.New(parser.BuildStack(os.Args[1:]))
+	st.SetOps(parser.ReadOps())
+	play(st, verbose)
+	if st.LenB() == 0 && sort.IntsAreSorted(st.CopyA()) {
+		fmt.Println("OK")
+	} else {
+		fmt.Println("KO")
+	}
 }

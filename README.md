@@ -1,4 +1,4 @@
-# Puss_Swap
+# Push_Swap
 
 ##About
 
@@ -12,8 +12,15 @@ I picked Quicksort, it quite suits my needs.
 
 Use a temporary Rotate stack to further avoid, if not completely, prepend slices operations
 
-rename SortStacks --> StacksSorter
-extract SubStack type to dedicated package and put it in the stack package --> rename SortStacker and create interface
+## TODO
+
+complete helper message in 'checker'
+rename SortStacks --> stacks.Sorter
+extract SubStack type to dedicated package and put it in the stack package --> rename stacks.Splitter and create interface
+rename rotateSorted -> pushASorted
+rename pushSorted -> pushBSorted
+
+write a function for lists smaller than 5
 
 ## Notes
 
