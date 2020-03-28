@@ -10,12 +10,15 @@ import s "gitlab.com/louisportay/push_swap/sortstacks"
 	st.RotateA()
 	st.AddOps([]string{"rra", "rra", "sa", "ra", "ra"})
 }
+*/
 
-func pushBottomA(st s.SortStacks) {
-	st.PushA()
-	st.RotateA()
-	st.AddOps([]string{"pa", "ra"})
-}*/
+func pushAndRotateSorted(st s.SortStacks) {
+	if st.FirstA() < st.FirstB() {
+		rotateSorted(st); pushSorted(st)
+	} else {
+		pushSorted(st); rotateSorted(st)
+	}
+}
 
 func rotateSorted(st s.SortStacks) {
 	st.RotateSorted()

@@ -4,6 +4,9 @@ import (
 	s "gitlab.com/louisportay/push_swap/sortstacks"
 )
 
+// OPTI: if pivot is the first element of the list, just push and rotate the whole
+// substack, do not add any substacklen, and return
+
 func splitStackB(st s.SortStacks, ss *SubStacks) (int, int) {
 	p := Pivot(st.B, ss.lenFirstB(), st)
 	newSubStackLen, alreadySorted := 0, 0
@@ -36,7 +39,11 @@ func restoreStackB(st s.SortStacks, ss *SubStacks) {
 
 func sortB(st s.SortStacks, ss *SubStacks) {
 
-	// if lenFirstB <= 4 --> special case, triggers end of recursion
+	if ss.lenFirstB() <= 4 {
+		sortTopB(ss.lenFirstB(), st)
+		ss.B = ss.B[:len(ss.B)-1]
+		return
+	}
 
 	newSubStackLen, alreadySorted := splitStackB(st, ss)
 	restoreStackB(st, ss)
@@ -48,7 +55,6 @@ func sortB(st s.SortStacks, ss *SubStacks) {
 
 	ss.newSubStackA(newSubStackLen)
 
-	log(st, ss)
 	sortA(st, ss)
 	sortB(st, ss)
 }

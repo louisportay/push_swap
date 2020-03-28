@@ -38,9 +38,11 @@ func restoreStackA(st s.SortStacks, ss *SubStacks) {
 
 func sortA(st s.SortStacks, ss *SubStacks) {
 
-/*	if ss.lenFirstA() <= 4 {
-		WIP
-	}*/
+	if ss.lenFirstA() <= 4 {
+		sortTopA(ss.lenFirstA(), st)
+		ss.A = ss.A[:len(ss.A)-1]
+		return
+	}
 
 	newSubStackLen, alreadySorted := splitStackA(st, ss)
 	restoreStackA(st, ss)

@@ -1,15 +1,34 @@
 package main
 
 import (
-	"fmt"//
-	"os"//
+	"fmt"
 	s "gitlab.com/louisportay/push_swap/sortstacks"
 )
 
+func lowest(indexer func (int) int, limit int) int {
+	low_val, low_index := indexer(0), 0
+	for i := 1; i < limit; i++ {
+		if indexer(i) < low_val {
+			low_val, low_index = indexer(i), i
+		}
+	}
+	return low_index
+}
+
+func indexLowestValIntSlice(s []int) int {
+	v, i := s[0], 0
+	for j := 1; j < len(s); j++ {
+		if s[j] < v {
+			v, i = s[j], j
+		}
+	}
+	return i
+}
+
 func genOps(op string, n int, st s.SortStacks) {
 	ops := make([]string, n)
-	for ; n > 0; n-- {
-		ops[n] = op
+	for i:=0; i < n; i++ {
+		ops[i] = op
 	}
 	st.AddOps(ops)
 }
@@ -40,9 +59,11 @@ func n(f func(s.SortStacks), n int, st s.SortStacks) {
 }
 
 func log(st s.SortStacks, ss *SubStacks) {
-	fmt.Printf("SS.A: %v\nSS.B: %v\n", ss.A, ss.B)
-	st.PrintBoth()
+	if ss != nil {
+		fmt.Printf("SS.A: %v\nSS.B: %v\n", ss.A, ss.B)
+	}
+	st.PrintA()
+	st.PrintB()
 	st.PrintSorted()
 	st.PrintOps()
-	os.Exit(0)
 }
