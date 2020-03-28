@@ -1,8 +1,8 @@
 package main
 
-import s "gitlab.com/louisportay/push_swap/sortstacks"
+import "gitlab.com/louisportay/push_swap/stacks"
 
-/*func swapBottomA(st s.SortStacks) {
+/*func swapBottomA(st stacks.Sorter) {
 	st.RevRotateA()
 	st.RevRotateA()
 	st.SwapA()
@@ -12,75 +12,77 @@ import s "gitlab.com/louisportay/push_swap/sortstacks"
 }
 */
 
-func pushAndRotateSorted(st s.SortStacks) {
-	if st.FirstA() < st.FirstB() {
-		rotateSorted(st); pushSorted(st)
+func pushABSorted(st stacks.Sorter) {
+	if st.A(0) < st.B(0) {
+		pushASorted(st)
+		pushBSorted(st)
 	} else {
-		pushSorted(st); rotateSorted(st)
+		pushBSorted(st)
+		pushASorted(st)
 	}
 }
 
-func rotateSorted(st s.SortStacks) {
-	st.RotateSorted()
+func pushASorted(st stacks.Sorter) {
+	st.PushASorted()
 	st.AddOps([]string{"ra"})
 }
 
-func pushSorted(st s.SortStacks) {
-	st.PushSorted()
+func pushBSorted(st stacks.Sorter) {
+	st.PushBSorted()
 	st.AddOps([]string{"pa", "ra"})
 }
 
-func pushA(st s.SortStacks) {
+func pushA(st stacks.Sorter) {
 	st.PushA()
 	st.AddOps([]string{"pa"})
 }
 
-func pushB(st s.SortStacks) {
+func pushB(st stacks.Sorter) {
 	st.PushB()
 	st.AddOps([]string{"pb"})
 }
 
-func swapA(st s.SortStacks) {
+func swapA(st stacks.Sorter) {
 	st.SwapA()
 	st.AddOps([]string{"sa"})
 }
 
-func swapB(st s.SortStacks) {
+func swapB(st stacks.Sorter) {
 	st.SwapB()
 	st.AddOps([]string{"sb"})
 }
 
-func swapBoth(st s.SortStacks) {
+func swapBoth(st stacks.Sorter) {
 	st.SwapBoth()
 	st.AddOps([]string{"ss"})
 }
 
-func rotateA(st s.SortStacks) {
+func rotateA(st stacks.Sorter) {
 	st.RotateA()
 	st.AddOps([]string{"ra"})
 }
 
-func rotateB(st s.SortStacks) {
+func rotateB(st stacks.Sorter) {
 	st.RotateB()
 	st.AddOps([]string{"rb"})
 }
 
-func rotateBoth(st s.SortStacks) {
+func rotateBoth(st stacks.Sorter) {
 	st.RotateBoth()
 	st.AddOps([]string{"rr"})
 }
 
-func revRotateA(st s.SortStacks) {
+func revRotateA(st stacks.Sorter) {
 	st.RevRotateA()
 	st.AddOps([]string{"rra"})
 }
 
-func revRotateB(st s.SortStacks) {
+func revRotateB(st stacks.Sorter) {
 	st.RevRotateB()
 	st.AddOps([]string{"rrb"})
 }
 
-func revRotateBoth(st s.SortStacks) {
+func revRotateBoth(st stacks.Sorter) {
 	st.RevRotateBoth()
 	st.AddOps([]string{"rrr"})
 }

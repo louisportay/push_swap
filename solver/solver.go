@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
 	"gitlab.com/louisportay/push_swap/parser"
-	s "gitlab.com/louisportay/push_swap/sortstacks"
+	"gitlab.com/louisportay/push_swap/stacks"
+	"os"
 )
 
 // OPTI: tester combien d'elements sont tries depuis le haut de A
@@ -11,7 +11,7 @@ import (
 
 // OPTI: regarder depuis la fin de A combien d'elements sont deja sorted et les ajouter a la liste
 func main() {
-	st := s.New(parser.BuildStack(os.Args[1:]))
+	st := stacks.NewSorter(parser.BuildStack(os.Args[1:]))
 	ss := New(st.LenA())
 	sortA(st, ss)
 	st.PrintOps()

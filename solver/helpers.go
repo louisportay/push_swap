@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	s "gitlab.com/louisportay/push_swap/sortstacks"
+	"gitlab.com/louisportay/push_swap/stacks"
 )
 
-func lowest(indexer func (int) int, limit int) int {
+func lowest(indexer func(int) int, limit int) int {
 	low_val, low_index := indexer(0), 0
 	for i := 1; i < limit; i++ {
 		if indexer(i) < low_val {
@@ -25,9 +25,9 @@ func indexLowestValIntSlice(s []int) int {
 	return i
 }
 
-func genOps(op string, n int, st s.SortStacks) {
+func genOps(op string, n int, st stacks.Sorter) {
 	ops := make([]string, n)
-	for i:=0; i < n; i++ {
+	for i := 0; i < n; i++ {
 		ops[i] = op
 	}
 	st.AddOps(ops)
@@ -39,26 +39,26 @@ func genOps(op string, n int, st s.SortStacks) {
 	the previous is picked
 */
 
-func Pivot(indexer func(int) int, subStackLen int, st s.SortStacks) int {
-		subStackLen--
-		if (indexer(subStackLen)  == indexer(0)) {
+func Pivot(indexer func(int) int, subStackLen int, st stacks.Sorter) int {
+	subStackLen--
+	if indexer(subStackLen) == indexer(0) {
+		return indexer(subStackLen)
+	}
+	for j := 0; j < subStackLen; j++ {
+		if indexer(subStackLen) > indexer(j) {
 			return indexer(subStackLen)
 		}
-		for j := 0; j < subStackLen; j++ {
-			if indexer(subStackLen) > indexer(j) {
-				return indexer(subStackLen)
-			}
-		}
-		return Pivot(indexer, subStackLen, st)
+	}
+	return Pivot(indexer, subStackLen, st)
 }
 
-func n(f func(s.SortStacks), n int, st s.SortStacks) {
+func n(f func(stacks.Sorter), n int, st stacks.Sorter) {
 	for ; n > 0; n-- {
 		f(st)
 	}
 }
 
-func log(st s.SortStacks, ss *SubStacks) {
+func log(st stacks.Sorter, ss *SubStacks) {
 	if ss != nil {
 		fmt.Printf("SS.A: %v\nSS.B: %v\n", ss.A, ss.B)
 	}

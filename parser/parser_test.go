@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func eq(a []int, b []int) bool {
@@ -22,7 +22,7 @@ func TestBuildStack(t *testing.T) {
 		args []string
 		want []int
 	}{
-		{[]string{"1","2","3"}, []int{1,2,3}},
+		{[]string{"1", "2", "3"}, []int{1, 2, 3}},
 		{[]string{"1"}, []int{1}},
 	}
 

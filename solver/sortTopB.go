@@ -1,58 +1,78 @@
 package main
 
 import (
-	s "gitlab.com/louisportay/push_swap/sortstacks"
+	"gitlab.com/louisportay/push_swap/stacks"
 )
 
-func sortTopB(subStackLen int, st s.SortStacks) {
+func sortTopB(subStackLen int, st stacks.Sorter) {
 	simpleCases := func(lowestIndex int) {
 		if lowestIndex == 0 {
-			pushSorted(st)
+			pushBSorted(st)
 			sortTopB(subStackLen-1, st)
 		} else if lowestIndex == 1 {
-			swapB(st); pushSorted(st)
+			swapB(st)
+			pushBSorted(st)
 			sortTopB(subStackLen-1, st)
 		}
 	}
 	switch subStackLen {
 	case 1:
-		pushSorted(st)
+		pushBSorted(st)
 	case 2:
 		if st.B(0) < st.B(1) {
-			pushSorted(st); pushSorted(st)
+			pushBSorted(st)
+			pushBSorted(st)
 		} else {
-			swapB(st); pushSorted(st); pushSorted(st)
+			swapB(st)
+			pushBSorted(st)
+			pushBSorted(st)
 		}
 	case 3:
 		switch i := lowest(st.B, 3); i {
 		case 0, 1:
 			simpleCases(i)
 		case 2:
-			pushA(st); swapB(st); pushSorted(st); pushAndRotateSorted(st)
+			pushA(st)
+			swapB(st)
+			pushBSorted(st)
+			pushABSorted(st)
 		}
 	case 4:
 		switch i := lowest(st.B, 4); i {
 		case 0, 1:
 			simpleCases(i)
 		case 2:
-			pushA(st); swapB(st); pushSorted(st)
+			pushA(st)
+			swapB(st)
+			pushBSorted(st)
 			switch indexLowestValIntSlice([]int{st.A(0), st.B(0), st.B(1)}) {
 			case 0:
-				rotateSorted(st); sortTopB(2, st)
+				pushASorted(st)
+				sortTopB(2, st)
 			case 1:
-				pushSorted(st); pushAndRotateSorted(st)
+				pushBSorted(st)
+				pushABSorted(st)
 			case 2:
-				swapB(st); pushSorted(st); pushAndRotateSorted(st)
+				swapB(st)
+				pushBSorted(st)
+				pushABSorted(st)
 			}
 		case 3:
-			pushA(st); pushA(st); swapB(st); pushSorted(st)
+			pushA(st)
+			pushA(st)
+			swapB(st)
+			pushBSorted(st)
 			switch indexLowestValIntSlice([]int{st.B(0), st.A(0), st.A(1)}) {
 			case 0:
-				pushSorted(st); sortTopA(2, st)
+				pushBSorted(st)
+				sortTopA(2, st)
 			case 1:
-				rotateSorted(st); pushAndRotateSorted(st)
+				pushASorted(st)
+				pushABSorted(st)
 			case 2:
-				swapA(st); rotateSorted(st); pushAndRotateSorted(st)
+				swapA(st)
+				pushASorted(st)
+				pushABSorted(st)
 			}
 		}
 	}

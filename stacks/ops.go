@@ -1,4 +1,4 @@
-package sortstacks
+package stacks
 
 func swap(i []int) {
 	if len(i) > 1 {
@@ -64,11 +64,11 @@ func (s *sortStacks) pop(i *[]int) {
 	s.sorted = append(s.sorted, x)
 }
 
-func (s *sortStacks) RotateSorted() {
+func (s *sortStacks) PushASorted() {
 	s.pop(&s.a)
 }
 
-func (s *sortStacks) PushSorted() {
+func (s *sortStacks) PushBSorted() {
 	s.pop(&s.b)
 }
 
@@ -91,25 +91,3 @@ func (s *sortStacks) RevRotateBoth() {
 	revRotate(&s.a)
 	revRotate(&s.b)
 }
-
-
-// To Delete
-func (st *sortStacks) FirstA() int {
-	return st.a[len(st.a)-1]
-}
-
-// To Delete
-func (st *sortStacks) FirstB() int {
-	return st.b[len(st.b)-1]
-}
-
-// To Delete Maybe
-func (st *sortStacks) LastA() int {
-	return st.a[0]
-}
-
-// To Delete Maybe
-func (st *sortStacks) LastB() int {
-	return st.b[0]
-}
-

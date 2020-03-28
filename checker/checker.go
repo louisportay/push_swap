@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"gitlab.com/louisportay/push_swap/parser"
-	s "gitlab.com/louisportay/push_swap/sortstacks"
+	"gitlab.com/louisportay/push_swap/stacks"
 	"os"
 	"sort"
 )
@@ -21,7 +21,7 @@ func setFlags() bool {
 	return false
 }
 
-func play(st s.SortStacks, v bool) {
+func play(st stacks.Sorter, v bool) {
 	for _, o := range st.Ops() {
 		if v == true {
 			st.PrintA()
@@ -38,8 +38,8 @@ func play(st s.SortStacks, v bool) {
 
 func main() {
 	verbose := setFlags()
-	st := s.New(parser.BuildStack(os.Args[1:]))
-	st.SetOps(parser.ReadOps())
+	st := stacks.NewSorter(parser.BuildStack(os.Args[1:]))
+	st.AddOps(parser.ReadOps())
 	play(st, verbose)
 	if st.LenB() == 0 && sort.IntsAreSorted(st.CopyA()) {
 		fmt.Println("OK")
