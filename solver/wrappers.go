@@ -2,16 +2,6 @@ package main
 
 import "gitlab.com/louisportay/push_swap/stacks"
 
-/*func swapBottomA(st stacks.Sorter) {
-	st.RevRotateA()
-	st.RevRotateA()
-	st.SwapA()
-	st.RotateA()
-	st.RotateA()
-	st.AddOps([]string{"rra", "rra", "sa", "ra", "ra"})
-}
-*/
-
 func pushABSorted(st stacks.Sorter) {
 	if st.A(0) < st.B(0) {
 		pushASorted(st)

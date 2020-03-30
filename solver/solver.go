@@ -36,7 +36,7 @@ func initialSorted(st stacks.Sorter) {
 		}
 	} else if up+1 >= len(a)-up-1 && up-low+1 >= len(a)-up-1 {
 		w(revRotateA, len(a)-up-1, st)
-		st.MoveASorted(up-low+1)
+		st.MoveASorted(up - low + 1)
 	} else if up+1 < len(a)-up-1 && up-low+1 >= low {
 		w(rotateA, low, st)
 		w(pushASorted, up-low+1, st)

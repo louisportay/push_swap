@@ -1,42 +1,32 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"gitlab.com/louisportay/push_swap/stacks"
 )
 
-func splitStackA(st stacks.Sorter, ss *SubStacks) (int, int, Order) {
-	p, order := Pivot(st.A, ss.lenFirstA(), None, st)
-	newSubStackLen, belowPivot:= 0, 0
+func splitStackA(st stacks.Sorter, ss *SubStacks) int {
+	p := Pivot(st.A, ss.lenFirstA())
+	newSubStackLen := 0
 	for i := 0; i < ss.lenFirstA()+newSubStackLen; i++ {
 		if st.A(0) < p {
 			pushB(st)
 			newSubStackLen++
 			ss.decFirstA()
-		} else if st.A(0) == p {
-		//	pushB(st)
-		//	newSubStackLen++
-		//	ss.decFirstA()
-			belowPivot = ss.lenFirstA() + newSubStackLen - i// - 1
-			if order == Descending {
-				break ;
-			}
-		} else if st.A(0) > p {
+		} else if st.A(0) >= p {
 			rotateA(st)
 		}
 	}
-	return newSubStackLen, belowPivot, order
+	return newSubStackLen
 }
 
 // restores values which were previously rotated to the bottom of A
-func restoreStackA(st stacks.Sorter, ss *SubStacks, belowPivot int) {
+func restoreStackA(st stacks.Sorter, ss *SubStacks) {
 	if st.LenSorted() > 0 || ss.lenRestA() > 0 {
-		if ss.lenFirstA() > st.LenSorted()+ss.lenRestA()+belowPivot {
-			w(rotateA, ss.lenRestA()+belowPivot, st)
+		if ss.lenFirstA() > st.LenSorted()+ss.lenRestA() {
+			w(rotateA, ss.lenRestA(), st)
 			genOps("ra", st.LenSorted(), st)
 		} else {
-			w(revRotateA, ss.lenFirstA()-belowPivot, st)
+			w(revRotateA, ss.lenFirstA(), st)
 		}
 
 	}
@@ -50,21 +40,9 @@ func sortA(st stacks.Sorter, ss *SubStacks) {
 		return
 	}
 
-	newSubStackLen, belowPivot, order := splitStackA(st, ss)
+	ss.newSubStackB(splitStackA(st, ss))
+	restoreStackA(st, ss)
 
-	if order == Descending {
-		fmt.Fprintf(os.Stderr, "A Asc: %v\n", belowPivot)
-		restoreStackA(st, ss, belowPivot)
-	} else {
-		restoreStackA(st, ss, 0)
-		fmt.Fprintf(os.Stderr, "A Asc: %v\n", belowPivot)
-		for ; belowPivot > 0; belowPivot-- {
-			pushBSorted(st)
-			newSubStackLen--
-		}
-	}
-
-	ss.newSubStackB(newSubStackLen)
 	sortB(st, ss)
 	sortA(st, ss)
 }
