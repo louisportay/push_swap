@@ -5,6 +5,14 @@ import (
 	"gitlab.com/louisportay/push_swap/stacks"
 )
 
+func consecutiveValuesHigherRef(indexer func(int) int, limit, refVal int) int {
+	l := 0
+	for limit--; limit > 0 && indexer(limit) >= refVal; limit-- {
+		l++
+	}
+	return l
+}
+
 func lowest(indexer func(int) int, limit int) int {
 	low_val, low_index := indexer(0), 0
 	for i := 1; i < limit; i++ {
@@ -15,7 +23,7 @@ func lowest(indexer func(int) int, limit int) int {
 	return low_index
 }
 
-func lowestRef(indexer func(int) int, limit int, ref int) (int, error) {
+func lowestRef(indexer func(int) int, limit, ref int) (int, error) {
 	i := 0
 	for ; i < limit && indexer(i) <= indexer(ref); i++ {
 	}
@@ -62,12 +70,13 @@ func indexLowestValIntSlice(s []int) int {
 	pivot is median value
 */
 
-func Pivot(indexer func(int) int, subStackLen int) int {
+func Pivot(indexer func(int) int, subStackLen int) (int, int) {
 	p := lowest(indexer, subStackLen)
+	low := p
 	for i := 0; i < subStackLen/2; i++ {
 		p, _ = lowestRef(indexer, subStackLen, p)
 	}
-	return indexer(p)
+	return indexer(p), indexer(low)
 }
 
 // use with raw ops, methods

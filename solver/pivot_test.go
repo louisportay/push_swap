@@ -31,9 +31,9 @@ func TestPivot(t *testing.T) {
 		t.Run(testname, func(t *testing.T) {
 			var r int
 			if tt.ix == A {
-				r = Pivot(tt.st.A, tt.subStacklen)
+				r, _ = Pivot(tt.st.A, tt.subStacklen)
 			} else {
-				r = Pivot(tt.st.B, tt.subStacklen)
+				r, _ = Pivot(tt.st.B, tt.subStacklen)
 			}
 			if r != tt.want {
 				t.Errorf("got %d, want %d", r, tt.want)

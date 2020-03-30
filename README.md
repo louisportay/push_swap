@@ -56,7 +56,7 @@ Starting with the whole stack **A**, I will adopt different strategies regarding
 -Is is already sorted ? Or at least partly ?
 -How big it is ?
 
-In my implementation, the **Sorted** stack is located at the bottom of **A**, a simple *ra* will add any element on top of **A** to the **Sorted** stack 
+In my implementation, the **Sorted** stack is located at the bottom of **A**, a simple *ra* will implicitly add any element on top of **A** to the **Sorted** stack 
 
 I split my **A** stack with a *Pivot*, I define it from the bottom of **A** so that there are elements superior and inferior to it
 Every element inferior to *Pivot* are pushed to **B**, the others are rotated to **A** bottom
@@ -70,8 +70,11 @@ Every substacks will be recursively depilated resulting in empty **A** and **B**
 
 Generate a *descendingly* sorted list (highest value first) at the beginning of the program, stored just above the *ascending* one (*sorted* list)
 When the *sorted* list is full just *reverse rotate* it or *rotate* the *descendingly* sorted list
-
 try a long list with only the two first elements swapped to get a feel for its necessity
+This is a special case optimization
+
+Write an algorithm for short lists (without using a *sorted* list)
+
 
 ## Notes
 
