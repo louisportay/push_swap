@@ -1,38 +1,44 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"gitlab.com/louisportay/push_swap/stacks"
 )
 
-func splitStackA(st stacks.Sorter, ss *SubStacks) (int, int) {
-	p := Pivot(st.A, ss.lenFirstA(), st)
-	newSubStackLen, alreadySorted := 0, 0
+func splitStackA(st stacks.Sorter, ss *SubStacks) (int, int, Order) {
+	p, order := Pivot(st.A, ss.lenFirstA(), None, st)
+	newSubStackLen, belowPivot:= 0, 0
 	for i := 0; i < ss.lenFirstA()+newSubStackLen; i++ {
 		if st.A(0) < p {
 			pushB(st)
 			newSubStackLen++
 			ss.decFirstA()
 		} else if st.A(0) == p {
-			pushB(st)
-			newSubStackLen++
-			ss.decFirstA()
-			alreadySorted = ss.lenFirstA() + newSubStackLen - i - 1
+		//	pushB(st)
+		//	newSubStackLen++
+		//	ss.decFirstA()
+			belowPivot = ss.lenFirstA() + newSubStackLen - i// - 1
+			if order == Descending {
+				break ;
+			}
 		} else if st.A(0) > p {
 			rotateA(st)
 		}
 	}
-	return newSubStackLen, alreadySorted
+	return newSubStackLen, belowPivot, order
 }
 
 // restores values which were previously rotated to the bottom of A
-func restoreStackA(st stacks.Sorter, ss *SubStacks) {
+func restoreStackA(st stacks.Sorter, ss *SubStacks, belowPivot int) {
 	if st.LenSorted() > 0 || ss.lenRestA() > 0 {
-		if ss.lenFirstA() > st.LenSorted()+ss.lenRestA() {
-			n(rotateA, ss.lenRestA(), st)
+		if ss.lenFirstA() > st.LenSorted()+ss.lenRestA()+belowPivot {
+			w(rotateA, ss.lenRestA()+belowPivot, st)
 			genOps("ra", st.LenSorted(), st)
 		} else {
-			n(revRotateA, ss.lenFirstA(), st)
+			w(revRotateA, ss.lenFirstA()-belowPivot, st)
 		}
+
 	}
 }
 
@@ -44,12 +50,18 @@ func sortA(st stacks.Sorter, ss *SubStacks) {
 		return
 	}
 
-	newSubStackLen, alreadySorted := splitStackA(st, ss)
-	restoreStackA(st, ss)
+	newSubStackLen, belowPivot, order := splitStackA(st, ss)
 
-	for ; alreadySorted > 0; alreadySorted-- {
-		pushBSorted(st)
-		newSubStackLen--
+	if order == Descending {
+		fmt.Fprintf(os.Stderr, "A Asc: %v\n", belowPivot)
+		restoreStackA(st, ss, belowPivot)
+	} else {
+		restoreStackA(st, ss, 0)
+		fmt.Fprintf(os.Stderr, "A Asc: %v\n", belowPivot)
+		for ; belowPivot > 0; belowPivot-- {
+			pushBSorted(st)
+			newSubStackLen--
+		}
 	}
 
 	ss.newSubStackB(newSubStackLen)

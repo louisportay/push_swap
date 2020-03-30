@@ -72,6 +72,14 @@ func (s *sortStacks) PushBSorted() {
 	s.pop(&s.b)
 }
 
+func (s *sortStacks) MoveASorted(r int) {
+	x := make([]int, r)
+	copy(x, s.a[0:r])
+	reverseInts(x)
+	s.sorted = append(s.sorted, x...)
+	s.a = s.a[r:]
+}
+
 func revRotate(i *[]int) {
 	if len(*i) > 1 {
 		x := (*i)[0]

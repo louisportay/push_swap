@@ -2,14 +2,13 @@ package main
 
 import (
 	"gitlab.com/louisportay/push_swap/stacks"
+	"os"
+	"fmt"
 )
 
-// OPTI: if pivot is the first element of the list, just push and rotate the whole
-// substack, do not add any substacklen, and return
-
-func splitStackB(st stacks.Sorter, ss *SubStacks) (int, int) {
-	p := Pivot(st.B, ss.lenFirstB(), st)
-	newSubStackLen, alreadySorted := 0, 0
+func splitStackB(st stacks.Sorter, ss *SubStacks) (int, int, Order) {
+	p, order := Pivot(st.B, ss.lenFirstB(), None, st)
+	newSubStackLen, belowPivot := 0, 0
 	for i := 0; i < ss.lenFirstB()+newSubStackLen; i++ {
 		if st.B(0) < p {
 			pushA(st)
@@ -19,20 +18,23 @@ func splitStackB(st stacks.Sorter, ss *SubStacks) (int, int) {
 			pushA(st)
 			newSubStackLen++
 			ss.decFirstB()
-			alreadySorted = ss.lenFirstB() + newSubStackLen - i - 1
+			belowPivot = ss.lenFirstB() + newSubStackLen - i - 1
+			if order == Descending {
+				break ;
+			}
 		} else if st.B(0) > p {
 			rotateB(st)
 		}
 	}
-	return newSubStackLen, alreadySorted
+	return newSubStackLen, belowPivot, order
 }
 
-func restoreStackB(st stacks.Sorter, ss *SubStacks) {
+func restoreStackB(st stacks.Sorter, ss *SubStacks, belowPivot int) {
 	if ss.lenRestB() > 0 {
-		if ss.lenFirstB() > ss.lenRestB() {
-			n(rotateB, ss.lenRestB(), st)
+		if ss.lenFirstB() > ss.lenRestB()+belowPivot {
+			w(rotateB, ss.lenRestB()+belowPivot, st)
 		} else {
-			n(revRotateB, ss.lenFirstB(), st)
+			w(revRotateB, ss.lenFirstB()-belowPivot, st)
 		}
 	}
 }
@@ -45,12 +47,17 @@ func sortB(st stacks.Sorter, ss *SubStacks) {
 		return
 	}
 
-	newSubStackLen, alreadySorted := splitStackB(st, ss)
-	restoreStackB(st, ss)
-
-	for ; alreadySorted > 0; alreadySorted-- {
-		pushASorted(st)
-		newSubStackLen--
+	newSubStackLen, belowPivot, order := splitStackB(st, ss)
+	if order == Descending {
+		fmt.Fprintf(os.Stderr, "B Desc: %v\n", belowPivot)
+		restoreStackA(st, ss, belowPivot)
+	} else {
+		restoreStackA(st, ss, 0)
+		fmt.Fprintf(os.Stderr, "B Asc: %v\n", belowPivot)
+		for ; belowPivot > 0; belowPivot-- {
+			pushASorted(st)
+			newSubStackLen--
+		}
 	}
 
 	ss.newSubStackA(newSubStackLen)

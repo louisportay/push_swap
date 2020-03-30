@@ -54,6 +54,7 @@ type Sorter interface {
 	RevRotateBoth()
 
 	PushASorted()
+	MoveASorted(int)
 	PushBSorted()
 }
 

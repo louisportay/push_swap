@@ -3,7 +3,6 @@ package main
 type SubStacks struct {
 	A []int
 	B []int
-	//RotateStack []int
 }
 
 func New(initialLen int) *SubStacks {

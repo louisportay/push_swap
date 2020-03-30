@@ -12,7 +12,7 @@ func setFlags() bool {
 	if len(os.Args) == 1 {
 		os.Exit(0)
 	} else if os.Args[1] == "-h" {
-		fmt.Println("")
+		fmt.Println("A Stack Sorting Program\nPlease review the README file for usage and more informations")
 		os.Exit(0)
 	} else if os.Args[1] == "-v" {
 		os.Args = os.Args[1:]
